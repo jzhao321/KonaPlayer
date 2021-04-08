@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "outDir": "./public/",
+    "noImplicitAny": true,
+    "module": "ES6",
+    "target": "ES5",
+    "allowJs": true,
+    "sourceMap": true,
+    "baseUrl": "src",
+    "paths": {
+      "@interfaces/*": ["interfaces/*"],
+      "@enums/*": ["enums/*"]
+    }
+  }
+}
