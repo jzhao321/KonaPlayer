@@ -41,6 +41,7 @@ export default class KonaPlayer {
     const divToRenderIn = document.querySelector<HTMLDivElement>(selector);
 
     // Video Element
+    this.elements.videoElement.id = 'konaplayer';
     this.elements.videoElement.autoplay = this.config.autoPlay;
     this.elements.videoElement.muted = this.config.mute;
     this.elements.videoElement.controls = true;
@@ -48,6 +49,7 @@ export default class KonaPlayer {
     // Source Element
     this.elements.sourceElement.setAttribute('src', this.config.mediaItems[this.state.videoIndex].streamUrl);
     this.elements.sourceElement.setAttribute('type', 'video/webm');
+    this.elements.sourceElement.id = 'videoSrc';
 
     // Rendering Video Elements
     divToRenderIn.appendChild(this.elements.videoElement);
@@ -70,28 +72,27 @@ export default class KonaPlayer {
    * If only 1 video is in mediaItems and Loop is true, will replay the video
    * If only 1 video is in mediaItems and Loop is false, will stop after video ends
    * If any video except last is played, and Loop and Continuous Play is true, will move on to next video
-   * If any video except is played, and Loop and Continuous Play is false, will stop after video
+   * If any video except last is played, and Loop and Continuous Play is false, will stop after video
    * If last video is played, and Loop and Continuous Play is true, will loop back to first video
    * If last video is played, and Loop and Continuous play is false, will stop after last video
    */
-  nextItem = (): void => {
-    if (this.config.mediaItems.length > 1 && this.config.loop && this.config.continuousPlay) {
+  nextItem = (): HTMLVideoElement => {
+    if (this.config.mediaItems.length > 1) {
       // Checks if the it's the last video
       if (this.state.videoIndex >= this.config.mediaItems.length - 1) {
         this.state.videoIndex = 0;
       } else {
         this.state.videoIndex += 1;
       }
-
       this.elements.sourceElement.src = this.config.mediaItems[this.state.videoIndex].streamUrl;
-
       this.elements.videoElement.load();
-
-      // Plays the new video immediately if continuousPlay is true
-      this.config.continuousPlay && this.elements.videoElement.play();
+      if (this.config.loop && this.config.continuousPlay) {
+        this.elements.videoElement.play();
+      }
     } else if (this.config.loop) {
       this.play();
     }
+    return this.elements.videoElement;
   }
 
   /**
@@ -101,10 +102,11 @@ export default class KonaPlayer {
    * @param callback Function called when event occurs
    */
   subscribe = (eventName: KonaPlayerEvent, callback: () => void): void => {
-    if (this.state.callbackArray[eventName] && Array.isArray(this.state.callbackArray[eventName])) {
+    if (Array.isArray(this.state.callbackArray[eventName])) {
       this.state.callbackArray[eventName].push(callback);
+    } else {
+      this.state.callbackArray[eventName] = [callback];
     }
-    this.state.callbackArray[eventName] = [callback];
   }
 
   /**
@@ -112,7 +114,7 @@ export default class KonaPlayer {
    * @param event Event ID for which callback array to execute
    */
   private _runCallbacks = (event: KonaPlayerEvent) => {
-    this.state.callbackArray[event] ?? this.state.callbackArray[event].forEach((instance) => {
+    this.state.callbackArray[event] && this.state.callbackArray[event].forEach((instance) => {
       instance();
     });
   }

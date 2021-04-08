@@ -24,6 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   player.render('#root');
 
+  // The following are buttons that help interact with the application
   const playButton = document.createElement('button');
   const pauseButton = document.createElement('button');
   const nextItemButton = document.createElement('button');

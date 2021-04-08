@@ -23,7 +23,8 @@
             "allowShortCircuit": true
         }],
         "no-shadow": "off",
-        "max-len": "off"
+        "max-len": "off",
+        "import/no-extraneous-dependencies": "off"
     },
     "overrides": [
         {
@@ -32,7 +33,10 @@
     ],
     "settings": {
         "import/resolver": {
-            "typescript": {}
+            "typescript": {},
+            "node": {
+                "extensions": [".js", ".ts"]
+            }
         }
     }
 }
