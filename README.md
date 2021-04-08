@@ -19,7 +19,7 @@
  ```
  After installing the packages, run this to compile the app
  ```
- yarn start
+ yarn build
  ```
  After compiling, run this to serve the files using http-server
  ```
