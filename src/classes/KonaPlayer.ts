@@ -7,7 +7,8 @@ export default class KonaPlayer {
       [key: string]: (() => void)[]
     },
     started: boolean,
-    videoIndex: number
+    videoIndex: number,
+    timesPlayed: number
   }
 
   config: ConfigType;
@@ -23,13 +24,17 @@ export default class KonaPlayer {
       callbackArray: {},
       started: false,
       videoIndex: 0,
+      timesPlayed: 0,
     };
     this.elements = {
       videoElement: document.createElement('video'),
       sourceElement: document.createElement('source'),
     };
     this.elements.videoElement.addEventListener('play', () => {
-      this._runCallbacks(KonaPlayerEvent.STARTED);
+      if (this.state.timesPlayed <= 0) {
+        this._runCallbacks(KonaPlayerEvent.STARTED);
+      }
+      this.state.timesPlayed += 1;
     });
     this.elements.videoElement.addEventListener('ended', () => {
       this._runCallbacks(KonaPlayerEvent.ENDED);
@@ -45,6 +50,7 @@ export default class KonaPlayer {
     this.elements.videoElement.autoplay = this.config.autoPlay;
     this.elements.videoElement.muted = this.config.mute;
     this.elements.videoElement.controls = true;
+    this.elements.videoElement.className = 'videoPlayerElement';
 
     // Source Element
     this.elements.sourceElement.setAttribute('src', this.config.mediaItems[this.state.videoIndex].streamUrl);
@@ -77,6 +83,7 @@ export default class KonaPlayer {
    * If last video is played, and Loop and Continuous play is false, will stop after last video
    */
   nextItem = (): HTMLVideoElement => {
+    this.state.timesPlayed = 0;
     if (this.config.mediaItems.length > 1) {
       // Checks if the it's the last video
       if (this.state.videoIndex >= this.config.mediaItems.length - 1) {
@@ -119,3 +126,5 @@ export default class KonaPlayer {
     });
   }
 }
+// @ts-ignore
+window.KonaPlayer = KonaPlayer;

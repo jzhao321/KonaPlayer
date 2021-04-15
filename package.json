@@ -32,8 +32,13 @@
     "webpack-dev-server": "^3.11.2"
   },
   "scripts": {
-    "build": "yarn run lint && webpack --config ./webpack/webpack.config.js",
-    "test": "jest --watch",
+    "serve": "yarn run build && yarn run serveOnly",
+    "serveOnly": "cd public && http-server -o",
+    "build": "webpack --config ./webpack/webpack.config.js",
+    "test": "jest",
     "lint": "eslint src/** --fix"
+  },
+  "dependencies": {
+    "http-server": "^0.12.3"
   }
 }
